@@ -1,10 +1,10 @@
 import "./App.css";
-import ProductTab from "./productTab.jsx";
+import Helloparent from "./helloparent.jsx";
 
 function App() {
   return (
     <>
-      <ProductTab />
+      <Helloparent />
     </>
   );
 }

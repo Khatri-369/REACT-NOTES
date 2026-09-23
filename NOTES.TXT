@@ -26,3 +26,7 @@ class in html -> className in jsx
 fragment lets you group a list of children without adding extra nodes to the DOM.
 
 in jsx in we write {} then it is consider the javascript
+
+PROPS IN react
+props stands for properties
+properties are the data that is passed from parent to child component
