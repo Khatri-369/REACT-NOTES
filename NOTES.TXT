@@ -1,32 +1,71 @@
-USED FOR FRONTEND
-IT IS A JAVASCRIPT LIBRARY
+================================================================================
+                           REACT CORE CONCEPTS & NOTES
+================================================================================
 
-componenet is individual piece of code (it is reusable)
-we can re-render the componenet
+1. WHAT IS REACT?
+   - Open-source JavaScript library developed by Meta for frontend UI.
+   - Component-based architecture.
+   - Uses Virtual DOM for fast, optimized re-rendering (diffing & reconciliation).
 
-a component can contain html,css,js also
+2. COMPONENTS:
+   - Independent, reusable pieces of code that return UI markup.
+   - Can include HTML structure, CSS styling, and JS logic.
+   - Re-renders automatically when state or props change.
+   - CRUCIAL RULE: Component names MUST start with an Uppercase letter (PascalCase)!
+     Example: <HelloMsg />, <AmazonCard />
+     Reason: Lowercase tags (like <hellomsg />) are treated as native HTML tags and 
+     React will not execute your component function.
 
-jsx is used in react
-it is combination of js and html
+3. JSX (JavaScript XML):
+   - Syntax extension for JavaScript allowing HTML-like markup inside JS.
+   - BABEL is the compiler that transforms JSX into regular JavaScript 
+     (React.createElement).
+   - Rules in JSX:
+     * Must return a single root element or Fragment (<>...</>).
+     * class in HTML       -> className in JSX
+     * for in HTML         -> htmlFor in JSX
+     * inline styles       -> style={{ backgroundColor: "#fff", padding: "1rem" }}
+     * curly braces { }    -> Evaluates JavaScript expressions inside markup.
+     * self-closing tags   -> <img />, <input />
 
-jsx - javascript extention syntax
-it lets us write HTML directly inside js
+4. REACT STRICT MODE (<StrictMode>):
+   - Development tool to identify bugs and side-effects early.
+   - In production, it does nothing and has zero performance overhead.
+   - Why it renders 2 times in development:
+     1. To check whether components are "pure functions" (no external side effects during render).
+     2. To test useEffect cleanup functions by mounting, unmounting, and re-mounting.
 
-JSX -> BABEL -> JSX
-BABEL IS USED FOR JAVASCRIPT COMPILER
-it converts jsx to js
+5. PROPS (Properties):
+   - Data passed from a parent component down to a child component.
+   - Props are READ-ONLY (immutable); a child must never modify its received props.
+   - Props flow unidirectionally (top to bottom).
 
-COMPONENET IS REUSABLE AND INDEPENDANT PIECE OF CODE
+6. PROPS DESTRUCTURING:
+   - Instead of writing props.title, props.price:
+     export default function Product({ title, price }) { ... }
+   - Unpacks object keys directly in the function parameter list.
+   - Supports default values: { title = "Default Item", price = 0 }
 
-WRITING MARKUP IN JSX
+7. RENDERING LISTS WITH map():
+   - Array.prototype.map() transforms each data item into a JSX element.
+   - Returns a brand new array that React renders directly.
+   - Always supply a unique "key" prop to each list element (e.g., key={index} or key={id}).
+   - Why not forEach()? forEach() returns undefined, whereas map() returns the new array.
 
-id in html -> id in jsx
-class in html -> className in jsx
+8. CONDITIONAL RENDERING & DYNAMIC STYLING:
+   - Logical AND (&&): { price > 30000 && <p>5% Discount!</p> }
+   - Ternary Operator: { isDiscount ? "Sale" : "Regular" }
+   - Dynamic style objects:
+     let styles = { backgroundColor: price > 30000 ? "#DCE5EC" : "#fff" };
+     <div style={styles}>...</div>
 
-fragment lets you group a list of children without adding extra nodes to the DOM.
-
-in jsx in we write {} then it is consider the javascript
-
-PROPS IN react
-props stands for properties
-properties are the data that is passed from parent to child component
+9. MULTI-DIMENSIONAL DATA (2D ARRAYS):
+   - Defining 2D array:
+     let description = [
+         ["Men's running shoes", "20% off"],
+         ["Women's running shoes", "10% off"]
+     ];
+   - Accessing elements:
+     description[0][0] -> "Men's running shoes"
+     description[0][1] -> "20% off"
+================================================================================

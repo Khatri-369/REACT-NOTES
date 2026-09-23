@@ -1,10 +1,10 @@
 import "./App.css";
-import Helloparent from "./helloparent.jsx";
+import Amazonf from "./amazonf.jsx";
 
 function App() {
   return (
     <>
-      <Helloparent />
+      <Amazonf />
     </>
   );
 }
