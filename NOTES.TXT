@@ -168,4 +168,67 @@
       * Optimized (Lazy Initial State): useState(RANDOM)
         -> Pass only the FUNCTION REFERENCE (without parentheses). React will execute it
            ONLY ONCE during the initial mount, skipping execution on subsequent renders.
+
+================================================================================
+               OBJECTS & ARRAYS IN STATE (COMPLEX STATE)
+================================================================================
+
+17. OBJECTS IN REACT STATE:
+    - Initializing an object in state:
+        const [moves, setMoves] = useState({ blue: 0, red: 0, yellow: 0, green: 0 });
+    - State Immutability:
+      * React detects state changes by comparing object references (shallow comparison).
+      * Directly mutating properties (e.g., moves.blue += 1) DOES NOT change the object reference,
+        so React will NOT re-render the component!
+    - Updating Objects using the Spread Operator (...):
+      * Always create a new object copying unchanged properties:
+        setMoves((prevMoves) => {
+            return { ...prevMoves, blue: prevMoves.blue + 1 };
+        });
+      * Why spread? `setMoves` replaces the entire object. Spreading copies over all other
+        existing keys (red, yellow, green) so they don't get erased.
+
+18. ARRAYS IN REACT STATE:
+    - Treating Arrays as Immutable:
+      * Standard mutating array methods (push, pop, splice, shift, unshift) should NEVER be used directly on state.
+      * Always use non-mutating methods that return a new array (spread [...], filter, map, slice).
+
+    - Common Array Operations in State (TodoList / LudoBoard pattern):
+      1) ADDING an item (Spread Operator):
+         setTodos((prevTodos) => [...prevTodos, newTodo]);
+
+      2) DELETING an item (.filter()):
+         setTodos((prevTodos) => {
+             return prevTodos.filter((_, idx) => idx !== indexToDelete);
+         });
+
+      3) UPDATING ALL elements (.map()):
+         setTodos((prevTodos) => {
+             return prevTodos.map((todo) => todo.toUpperCase());
+         });
+
+      4) UPDATING A SINGLE element by index/condition (.map()):
+         setTodos((prevTodos) => {
+             return prevTodos.map((todo, idx) => {
+                 if (idx === targetIndex) {
+                     return todo.toUpperCase();
+                 }
+                 return todo;
+             });
+         });
+
+      5) MARKING AN ITEM AS DONE / COMPLETE:
+         - Method A (Storing JSX / Tag wrap):
+           setTodos((prevTodos) => prevTodos.map((todo, idx) => idx === target ? <s>{todo}</s> : todo));
+
+         - Method B (Best Practice: Array of Objects with boolean flag):
+           State: [{ id: 1, task: "Buy Milk", isDone: false }]
+           Update:
+             setTodos((prevTodos) => prevTodos.map((todo, idx) => {
+                 return idx === target ? { ...todo, isDone: !todo.isDone } : todo;
+             }));
+           Render:
+             <span style={{ textDecoration: todo.isDone ? "line-through" : "none" }}>
+                 {todo.task}
+             </span>
 ================================================================================
