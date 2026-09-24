@@ -1,6 +1,6 @@
 # React Learning Notes & Concepts ⚛️
 
-A comprehensive reference for foundational React concepts, core rules, and best practices learned during hands-on projects.
+A comprehensive reference for foundational React concepts, core rules, architecture, and hands-on code examples.
 
 ---
 
@@ -14,13 +14,20 @@ A comprehensive reference for foundational React concepts, core rules, and best 
 7. [Rendering Lists with `map()`](#7-rendering-lists-with-map)
 8. [Conditional Rendering & Styling](#8-conditional-rendering--styling)
 9. [Multi-Dimensional Data (2D Arrays)](#9-multi-dimensional-data-2d-arrays)
+10. [Event Handling & Synthetic Events](#10-event-handling--synthetic-events)
+11. [The 3 Pillars of React](#11-the-3-pillars-of-react)
+12. [State in React](#12-state-in-react)
+13. [React Hooks Overview & Rules](#13-react-hooks-overview--rules)
+14. [The `useState` Hook In-Depth](#14-the-usestate-hook-in-depth)
+15. [State Updater Functions & Closures](#15-state-updater-functions--closures)
+16. [Lazy Initial State (Performance Optimization)](#16-lazy-initial-state-performance-optimization)
 
 ---
 
 ## 1. Introduction to React
 * **What is React?**: An open-source JavaScript library developed by Meta for building fast, interactive user interfaces (especially Single Page Applications - SPAs).
 * **Library vs Framework**: React is a library focused primarily on the View layer (`V` in MVC).
-* **Virtual DOM**: React creates a lightweight virtual representation of the actual DOM in memory, calculates the minimal differences (reconciliation / diffing), and batches updates efficiently.
+* **Virtual DOM**: React creates a lightweight virtual representation of the actual DOM in memory, calculates minimal differences (reconciliation / diffing), and batches updates efficiently.
 
 ---
 
@@ -38,7 +45,7 @@ export default function Card() {
 ```
 
 ### ⚠️ Golden Rule: PascalCase Naming
-* Component names **MUST ALWAYS start with a capital letter** (e.g., `Product`, `HelloMsg`, `AmazonCard`).
+* Component names **MUST ALWAYS start with a capital letter** (e.g., `Product`, `HelloMsg`, `AmazonCard`, `LikeButton`).
 * **Why?** React treats lowercase tags (like `<product />` or `<hellomsg />`) as native HTML tags (`<div>`, `<p>`). If you use lowercase, React will not execute your component!
 
 ---
@@ -190,4 +197,203 @@ Passing an `idx` prop to the child component enables dynamic lookup:
 ```jsx
 <p>{description[props.idx][0]}</p>
 <p>{description[props.idx][1]}</p>
+```
+
+---
+
+## 10. Event Handling & Synthetic Events
+Handling events with React elements is very similar to handling events on DOM elements, with some key syntactic differences:
+1. React events are named using **camelCase** (`onClick`, `onMouseDown`, `onSubmit`) rather than lowercase (`onclick`).
+2. With JSX you pass a **function reference** as the event handler rather than a string or immediate invocation.
+
+### Passing Function References vs Function Invocations
+```jsx
+// ✅ Correct: passing function reference
+<button onClick={handleClick}>Click Me</button>
+
+// ❌ Incorrect: invokes function immediately during render!
+<button onClick={handleClick()}>Click Me</button>
+```
+
+### The Synthetic Event Object
+React wraps browser native events in a cross-browser instance called `SyntheticEvent`:
+* It has the exact same interface as the browser's native event (including `stopPropagation()` and `preventDefault()`).
+* Works identically across all browsers.
+
+```jsx
+function handleClick(event) {
+    console.log("Event type:", event.type);
+    console.log("Target element:", event.target);
+}
+
+export default function Button() {
+    return <button onClick={handleClick}>Click Me</button>;
+}
+```
+
+### Preventing Default Behavior (`event.preventDefault()`)
+In pure HTML, returning `false` prevents default behavior (like form submission refreshing the page). In React, you must explicitly call `preventDefault()`:
+
+```jsx
+function handleSubmit(event) {
+    event.preventDefault(); // Prevents full page reload
+    console.log("Form submitted cleanly!");
+}
+
+export default function Form() {
+    return (
+        <form onSubmit={handleSubmit}>
+            <input type="text" placeholder="Write something..." />
+            <button type="submit">Submit</button>
+        </form>
+    );
+}
+```
+
+---
+
+## 11. The 3 Pillars of React
+
+React applications are built around three fundamental concepts:
+
+| Pillar | Definition | Mutability | Scope |
+| :--- | :--- | :--- | :--- |
+| **Component** | Reusable UI building block containing markup & logic | Static structure | Defines the view |
+| **Props** | Configuration data passed from parent to child | Read-Only (Immutable) | External / Passed down |
+| **State** | Data that changes over time based on user interactions | Mutable (via Setter) | Internal / Private |
+
+---
+
+## 12. State in React
+**State** is a built-in React object used to contain data or information about the component. A component's state can change over time; **whenever it changes, the component re-renders**.
+
+### Why not regular JavaScript variables?
+```jsx
+// ❌ Regular variables do NOT trigger re-renders:
+let count = 0;
+function increment() {
+    count++; // Variable changes, but React doesn't know, so UI never updates!
+}
+```
+* Normal variables reset back to their initial value every time a component function executes.
+* React's reconciliation engine has no way to track regular variable mutations.
+* Using React state triggers the **Render Phase $\rightarrow$ Diffing $\rightarrow$ Commit Phase (DOM Update)**.
+
+---
+
+## 13. React Hooks Overview & Rules
+Introduced in **React 16.8**, Hooks are functions that let you "hook into" React state and lifecycle features from function components.
+
+### Core Rules of Hooks:
+1. **Only Call Hooks at the Top Level**: Do not call Hooks inside loops, conditions, or nested functions. This ensures Hooks are called in the exact same order on every render.
+2. **Only Call Hooks from React Functions**: Call them from React functional components or custom hooks, not regular JS functions.
+
+React provides ~15 built-in hooks, the most essential being:
+* `useState`: Local state management.
+* `useEffect`: Handling side effects (API calls, subscriptions, timers).
+* `useContext`: Consuming context values without prop drilling.
+* `useRef`: Persisting values across renders without re-rendering, accessing DOM nodes directly.
+* `useReducer`: Managing complex state logic.
+* `useMemo` & `useCallback`: Performance optimization and memoization.
+
+---
+
+## 14. The `useState` Hook In-Depth
+`useState` declares a state variable that retains its value between renders.
+
+### Syntax:
+```jsx
+const [state, setState] = useState(initialValue);
+```
+* Uses **Array Destructuring**:
+  * `state`: The current state snapshot.
+  * `setState`: Setter function to update the state and schedule a re-render.
+
+### Example: Like Button (Toggle Pattern)
+```jsx
+import { useState } from "react";
+
+export default function LikeButton() {
+    const [isLiked, setIsLiked] = useState(false);
+
+    function handleClick() {
+        setIsLiked(!isLiked);
+    }
+
+    return (
+        <div>
+            <h3>State in React</h3>
+            <p onClick={handleClick} style={{ cursor: "pointer" }}>
+                {isLiked ? (
+                    <i className="fa-solid fa-heart" style={{ color: "red" }}></i>
+                ) : (
+                    <i className="fa-regular fa-heart"></i>
+                )}
+            </p>
+        </div>
+    );
+}
+```
+
+---
+
+## 15. State Updater Functions & Closures
+
+### Asynchronous State Updates & Batching
+State updates in React are **asynchronous** and **batched**. Calling a setter function does not immediately update the variable in the current running code.
+
+### 1. Direct Assignment:
+```jsx
+setCount(count + 1);
+```
+Used when the new state does not depend on immediate successive state calculations.
+
+### 2. Updater Callback Pattern:
+```jsx
+setCount((prevCount) => prevCount + 1);
+```
+**MUST be used when the next state depends on the previous state.**
+
+### Why does this matter?
+Consider calling `setCount` twice in the same handler:
+```jsx
+function incrementTwice() {
+    // ❌ Fails to increment by 2:
+    setCount(count + 1);
+    setCount(count + 1);
+    // Both calls read `count` from the current closure snapshot (e.g. 0).
+    // Final result: count becomes 1, NOT 2!
+}
+
+function incrementTwiceCorrectly() {
+    // ✅ Correct:
+    setCount((prev) => prev + 1);
+    setCount((prev) => prev + 1);
+    // React queues each updater function and passes the updated value to the next.
+    // Final result: count becomes 2!
+}
+```
+
+### Closures in React:
+A closure in JavaScript gives an inner function access to variables from its outer scope. Every render has its own props and state. Because event handlers capture the state of the render they were created in, using updater functions guarantees you always operate on the most up-to-date state.
+
+---
+
+## 16. Lazy Initial State (Performance Optimization)
+If your initial state is the result of an expensive calculation (e.g. reading from local storage, generating random numbers, parsing large datasets):
+
+```jsx
+function computeInitialValue() {
+    console.log("Expensive computation executed!");
+    return Math.floor(Math.random() * 100) + 1;
+}
+
+// ❌ Inefficient:
+const [count, setCount] = useState(computeInitialValue());
+// computeInitialValue() runs on EVERY single render, even though React
+// only uses its return value on the very first mount!
+
+// ✅ Optimized (Lazy Initial State):
+const [count, setCount] = useState(computeInitialValue);
+// Pass only the function reference! React calls it ONLY ONCE on mount.
 ```

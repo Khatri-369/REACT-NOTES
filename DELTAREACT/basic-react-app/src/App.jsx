@@ -1,10 +1,11 @@
 import "./App.css";
-import Amazonf from "./amazonf.jsx";
+import Button from "./button.jsx";
+import Form from "./form.jsx";
 
 function App() {
   return (
     <>
-      <Amazonf />
+      <Form />
     </>
   );
 }
