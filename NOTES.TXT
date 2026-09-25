@@ -232,3 +232,90 @@
                  {todo.task}
              </span>
 ================================================================================
+
+================================================================================
+FORMS IN REACT & HANDLING MULTIPLE INPUTS:
+================================================================================
+1) CONTROLLED COMPONENTS:
+   - Form inputs whose value is controlled by React state.
+   - Every input has `value={formData.fieldName}` and `onChange={handleChange}`.
+
+2) HANDLING MULTIPLE INPUTS WITH ONE HANDLER:
+   - Use ES6 Computed Property Names: `[e.target.name]: e.target.value`
+   - Example:
+     const [formData, setFormData] = useState({
+         username: "",
+         comment: "",
+         rating: ""
+     });
+
+     let handleChange = (e) => {
+         let fieldName = e.target.name;
+         let fieldValue = e.target.value;
+         setFormData((prevData) => {
+             return { ...prevData, [fieldName]: fieldValue };
+         });
+     };
+
+   - WHY `[fieldName]: fieldValue`?
+     * `fieldName: fieldValue` -> Creates a literal key named "fieldName" ❌
+     * `[fieldName]: [fieldValue]` -> Turns fieldValue into an Array! ❌
+     * `[fieldName]: fieldValue` -> Evaluates variable dynamically as key ✅
+
+3) FORM SUBMISSION & VALIDATION:
+   - Always call `e.preventDefault()` at the beginning of `onSubmit` to prevent page reload.
+   - Formik: A popular library used for complex form management and validation in React.
+
+================================================================================
+LIFTING STATE UP:
+================================================================================
+- When multiple child components need to share or update data:
+  1. Move the shared state to their closest common parent component.
+  2. Pass a callback function from parent to child via props (e.g., `addNewComment={addNewComment}`).
+  3. Child calls `props.addNewComment(formData)` to send data back up to the parent.
+
+================================================================================
+USEEFFECT HOOK:
+================================================================================
+- Used to perform "side effects" in functional components.
+- Side effects include: data fetching (APIs), direct DOM manipulations, timers, subscriptions.
+
+3 WAYS TO USE useEffect:
+1) Without dependency array:
+   useEffect(() => {
+       console.log("Runs on initial mount + every re-render");
+   });
+
+2) With empty dependency array `[]`:
+   useEffect(() => {
+       console.log("Runs ONLY ONCE when the component mounts");
+   }, []);
+
+3) With dependencies `[state1, state2]`:
+   useEffect(() => {
+       console.log("Runs on mount + whenever specified states change");
+   }, [countx]);
+
+================================================================================
+API CALLS WITH USEEFFECT & ASYNC/AWAIT:
+================================================================================
+- How to fetch data when component loads:
+  1. Define an async fetch function.
+  2. `let res = await fetch(URL);` -> gets the response stream and headers.
+  3. `let data = await res.json();` -> reads the stream & parses JSON into a JS object.
+  4. Store the data in state.
+  5. Call the function inside `useEffect(..., [])`.
+
+- Example:
+  const [joke, setJoke] = useState({});
+
+  let makeJoke = async () => {
+      let res = await fetch("https://official-joke-api.appspot.com/random_joke");
+      let data = await res.json();
+      setJoke({ setup: data.setup, punchline: data.punchline });
+  };
+
+  useEffect(() => {
+      makeJoke();
+  }, []);
+================================================================================
