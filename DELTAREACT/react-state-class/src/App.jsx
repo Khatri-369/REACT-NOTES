@@ -1,13 +1,10 @@
 import './App.css';
-import Counter from './Counter';
-import LikeButton from './LikeButton';
-import LudoBoard from './ludoboard';
-import TodoList from './TodoList';
+import Lottery from './Lottery';
 
 function App() {
   return (
     <>
-      <TodoList />
+      <Lottery />
     </>
   )
 }
