@@ -22,7 +22,7 @@ export default function Joker() {
     return (
         <>
             <h1>JOKER HERE</h1>
-            <h2>{joke.setup}</h2>
+            <h2 style={{ backgroundColor: "yellow" }}>{joke.setup}</h2>
             <h2>{joke.punchline}</h2>
             <button onClick={makeJoke}>Get a Joke</button>
         </>
