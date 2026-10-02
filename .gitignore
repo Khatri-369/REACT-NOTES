@@ -6,8 +6,10 @@ dist/
 dist-ssr/
 
 # Environment / local
+.env
+.env.local
+.env.*.local
 *.local
-.env*.local
 
 # Logs
 logs/

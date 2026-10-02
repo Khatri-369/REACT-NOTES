@@ -21,7 +21,7 @@
    - BABEL is the compiler that transforms JSX into regular JavaScript 
      (React.createElement).
    - Rules in JSX:
-     * Must return a single root element or Fragment (<>...</>).
+     * Must return a single root element (div) or Fragment (<>...</>).
      * class in HTML       -> className in JSX
      * for in HTML         -> htmlFor in JSX
      * inline styles       -> style={{ backgroundColor: "#fff", padding: "1rem" }}
