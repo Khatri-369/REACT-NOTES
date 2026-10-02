@@ -1,80 +1,48 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
-  const [formData, setFormData] = useState({
-    username: "",
-    comment: "",
-    rating: ""
+
+  const [count, setCount] = useState(0);
+  const [name, setName] = useState("");
+
+  // 1. Runs after every render
+  useEffect(() => {
+    console.log("Effect 1: Every render");
   });
 
-  function handleChange(e) {
-    const fieldName = e.target.name;
-    const fieldValue = e.target.value;
+  // 2. Runs after initial mount
+  useEffect(() => {
+    console.log("Effect 2: Component mounted");
+  }, []);
 
-    setFormData((prevData) => {
-      return {
-        ...prevData,
-        [fieldName]: fieldValue
-      };
-    });
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    console.log(formData);
-
-    alert("Form Submitted!");
-  }
+  // 3. Runs when count changes
+  useEffect(() => {
+    console.log("Effect 3: Count changed:", count);
+  }, [count]);
 
   return (
     <div>
-      <h1>Review Form</h1>
 
-      <form onSubmit={handleSubmit}>
+      <h1>useEffect Example</h1>
 
-        <input
-          type="text"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          placeholder="Username"
-        />
+      <h2>Count: {count}</h2>
 
-        <br /><br />
+      <button
+        onClick={() => setCount(count + 1)}
+      >
+        Increase Count
+      </button>
 
-        <textarea
-          name="comment"
-          value={formData.comment}
-          onChange={handleChange}
-          placeholder="Comment"
-        />
+      <br /><br />
 
-        <br /><br />
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Enter name"
+      />
 
-        <input
-          type="number"
-          name="rating"
-          value={formData.rating}
-          onChange={handleChange}
-          placeholder="Rating"
-        />
+      <p>Name: {name}</p>
 
-        <br /><br />
-
-        <button type="submit">
-          Submit
-        </button>
-
-      </form>
-
-      <hr />
-
-      <h2>Current State</h2>
-
-      <p>Username: {formData.username}</p>
-      <p>Comment: {formData.comment}</p>
-      <p>Rating: {formData.rating}</p>
     </div>
   );
 }
